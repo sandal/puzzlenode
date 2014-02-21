@@ -80,16 +80,24 @@ def testScore(word, nums):
         score += getLetterScore(word[i]) * num
         i += 1
     return score
+def flipBoard(board):
+    return map(list, zip(*board))
+def unFlipBoard(flipBoard):
+    return map(list, zip(*flipBoard))
     
 validWords = validWords() # words composed of the tiles from the json file
 board = getBoard() # 2-d array of integers
+flipBoard = flipBoard(board)
 
 highest = 0
 highestWord = ''
 whichRow = None
 whichCol = None
-print validWords[-1]
+
+is_board_flipped = None
+# the following will give the highest word and the location of the highest scoring word
 for word in validWords:
+    
     for row in board:
         rowMarker = 0
         shift = 0
@@ -108,25 +116,58 @@ for word in validWords:
                 highestWord = word
                 whichRow = rowMarker
                 whichCol = columnMarker
-
+                is_board_flipped = True
             rowMarker += 1
-            
-def printNewBoard(highestWord, board, whichRow, whichCol):
+    
+    # this loop will determine the highest word for words going top down 
+    for row in flipBoard: 
+        rowMarker = 0
+        shift = 0
+        for i in range((len(row)-len(word))):
+            columnMarker = i
+            index = shift
+            section = []
+            for char in word:
+                section.append(row[index])
+                index += 1
+                
+            shift += 1
+
+            if testScore(word, section) > highest:
+                highest = testScore(word, section)
+                highestWord = word
+                whichRow = rowMarker
+                whichCol = columnMarker
+                is_board_flipped = False
+            rowMarker += 1
+# this will print a string of the board with the word in the correct location
+def printNewBoard(highestWord, board):
     output = ''
     trigger = False
     shift = 0
 
     for row in range(len(board)):
         for col in range(len(board[row])):
-
-            
-            if col == whichCol and row == whichRow:
-                trigger = True
-                output += highestWord[shift]
                 
-            else:
-                output += str(board[row][col])
+            output += str(board[row][col])
         output += '\n'
     return output
-print printNewBoard(highestWord, board, whichRow,whichCol)
-            
+def returnBoard(board, highestWord):
+    for i in range(len(highestWord)):
+        board[whichRow][whichCol+i] = highestWord[i]
+    board = printNewBoard(highestWord, board)
+    return board
+
+def returnFlipBoard(flipBoard, highestWord):
+    for i in range(len(highestWord)):
+        flipBoard[whichRow][whichCol+i] = highestWord[i]
+    temp = unFlipBoard(flipBoard)
+    board = printNewBoard(highestWord, temp)
+    print board
+if is_board_flipped:
+    ans = returnBoard(board, highestWord)
+else:
+    ans = returnFlipBoard(flipBoard,highestWord)
+with open('output.txt', 'w')as f:
+    f.write(ans)
+    
