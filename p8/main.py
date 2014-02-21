@@ -1,9 +1,9 @@
 import json
 
 def getTiles():
-    ''' returns a list of tiles from the input2.json file'''
+    ''' returns a list of tiles from the input.json file'''
     tileList = []
-    with open('input2.json', 'r') as f:
+    with open('input.json', 'r') as f:
         json_obj = json.load(f)
         
         for tiles in json_obj['tiles']:
@@ -11,9 +11,9 @@ def getTiles():
     return tileList
 
 def getTileLetters():
-    ''' returns a list of tiles from the input2.json file'''
+    ''' returns a list of tiles from the input.json file'''
     tileList = []
-    with open('input2.json', 'r') as f:
+    with open('input.json', 'r') as f:
         json_obj = json.load(f)
         
         for tiles in json_obj['tiles']:
@@ -40,7 +40,7 @@ def getLetterScore(tile):
 
 def getBoard():
     ''' returns a list of rows with each element containing a integer '''
-    with open('input2.json', 'r') as f:
+    with open('input.json', 'r') as f:
         json_obj = json.load(f)
         board = []
         for row in json_obj['board']:
@@ -53,7 +53,7 @@ def getBoard():
 def validWords():
     ''' returns list of words that '''
     words = []
-    with open('input2.json', 'r') as f:
+    with open('input.json', 'r') as f:
         json_obj = json.load(f)
         for word in json_obj['dictionary']:
             words.append(word)
