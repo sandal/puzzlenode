@@ -1,9 +1,9 @@
 import json
 
 def getTiles():
-    ''' returns a list of tiles from the input.json file'''
+    ''' returns a list of tiles from the input2.json file'''
     tileList = []
-    with open('input.json', 'r') as f:
+    with open('input2.json', 'r') as f:
         json_obj = json.load(f)
         
         for tiles in json_obj['tiles']:
@@ -11,9 +11,9 @@ def getTiles():
     return tileList
 
 def getTileLetters():
-    ''' returns a list of tiles from the input.json file'''
+    ''' returns a list of tiles from the input2.json file'''
     tileList = []
-    with open('input.json', 'r') as f:
+    with open('input2.json', 'r') as f:
         json_obj = json.load(f)
         
         for tiles in json_obj['tiles']:
@@ -32,48 +32,33 @@ def getScoreDict(tiles):
         split = list(tile)
         score_dict[split[0]] = int(split[1])
     return score_dict
-    
-score_dict = getScoreDict(getTiles())
+
+
 def getLetterScore(tile):
+    score_dict = getScoreDict(getTiles())
     return score_dict[tile]
 
-def getWordScore(word):
-    ''' takes a word and returns its score '''
-    score = 0
-    for char in word:
-        char_score = getLetterScore(char)
-        score += char_score
-    return score
-
 def getBoard():
-    ''' returns a list of rows with each element containg a integer '''
-    with open('input.json', 'r') as f:
+    ''' returns a list of rows with each element containing a integer '''
+    with open('input2.json', 'r') as f:
         json_obj = json.load(f)
-        
         board = []
-        
         for row in json_obj['board']:
             tmp = []
             for num in row.split():
                 tmp.append(int(num))
             board.append(tmp)
     return board
-    
-def getWordList():
+
+def validWords():
+    ''' returns list of words that '''
     words = []
-    with open('input.json', 'r') as f:
+    with open('input2.json', 'r') as f:
         json_obj = json.load(f)
         for word in json_obj['dictionary']:
             words.append(word)
-            
-    return words
-    
-def validWords():
-    ''' returns list of words that '''
-    words = getWordList()
     tiles = getTileLetters()
     validWords = []
-    
     for word in words:
         tilesCopy = tiles[:]
         compareWord = ''
@@ -85,7 +70,6 @@ def validWords():
             if compareWord == word:
                 validWords.append(word)
     return validWords
-
 def testScore(word, nums):
     ''' nums is a list of integers. word is a valid word of equal length to the nums.
         this will calculate the scoreby multiplying the score of each tile to the 
@@ -96,16 +80,53 @@ def testScore(word, nums):
         score += getLetterScore(word[i]) * num
         i += 1
     return score
+    
+validWords = validWords() # words composed of the tiles from the json file
+board = getBoard() # 2-d array of integers
 
-print testScore('tordulaba',[1, 1, 4, 1, 1, 1, 1, 2, 1])
-    
-validWords = validWords()
-board = getBoard()
+highest = 0
+highestWord = ''
+whichRow = None
+whichCol = None
+print validWords[-1]
+for word in validWords:
+    for row in board:
+        rowMarker = 0
+        shift = 0
+        for i in range((len(row)-len(word))):
+            columnMarker = i
+            index = shift
+            section = []
+            for char in word:
+                section.append(row[index])
+                index += 1
+                
+            shift += 1
 
-    
-def highestScore(validWords, board):
-    highestScore = 0
-    
-        
-    return highestScore, word
-print highestScore(validWords, board)
+            if testScore(word, section) > highest:
+                highest = testScore(word, section)
+                highestWord = word
+                whichRow = rowMarker
+                whichCol = columnMarker
+
+            rowMarker += 1
+            
+def printNewBoard(highestWord, board, whichRow, whichCol):
+    output = ''
+    trigger = False
+    shift = 0
+
+    for row in range(len(board)):
+        for col in range(len(board[row])):
+
+            
+            if col == whichCol and row == whichRow:
+                trigger = True
+                output += highestWord[shift]
+                
+            else:
+                output += str(board[row][col])
+        output += '\n'
+    return output
+print printNewBoard(highestWord, board, whichRow,whichCol)
+            
