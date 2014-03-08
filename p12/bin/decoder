@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+
+require_relative "../lib/decoder"
+
+file = File.open(ARGV[0], 'r')
+lines = file.readlines
+word = lines.shift.strip
+text = lines.join
+
+alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+for shift in (1..alpha.length)
+    puts possibleWords(word, shift, alpha)
+end
+
+puts returnShiftedLetter('C', 1, alpha)
+
+dangerous = 'DANGEROUS'
+
+vigKeys = returnVigKeys(dangerous, alpha)
+
+output = ''
+vigIndex = 0
+text.each_char do |b|
+
+    if (alpha.include?(b))
+      newLetter = returnShiftedLetter(b, vigKeys[vigIndex], alpha)
+      output += newLetter
+      vigIndex +=1
+    else
+      output += b
+    end
+    
+    if vigIndex == vigKeys.length
+      vigIndex = 0
+    end
+    
+end
+print output
